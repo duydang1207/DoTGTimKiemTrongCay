@@ -1,0 +1,96 @@
+#include "url_Header.h"
+
+struct BNode
+{
+	string data;
+	BNode* next, * into, *prev;
+	void init()
+	{
+		next = into = nullptr;
+	}
+};
+
+
+struct Tree
+{
+	BNode* root = nullptr;
+	void init(BNode*& node)
+	{
+		node = new BNode;
+		node->init();
+	}
+	void insert(string value, BNode*& parent)
+	{
+		if (parent == nullptr)
+		{
+			init(parent);
+			parent->data = value;
+			return;
+		}
+		if (value.find(parent->data) != -1 && value != parent->data)
+		{
+			insert(value, parent->into);
+		}
+		else
+		{
+			insert(value, parent->next);
+		}
+	}
+	void printAll (BNode* head)
+	{
+		BNode* temp = head;
+		printInto(temp, 0);
+	}
+	void printInto(BNode* parent, int space)
+	{
+		if (parent == nullptr)
+			return;
+		string indentation = "";
+		for (int i = 0; i < space; i++)
+		{
+			indentation += " ";
+		}
+
+		cout << indentation << parent->data << lineSpacing;
+		printInto(parent->into, space + INDENTATION);
+		if (parent->next != nullptr)
+			printInto(parent->next, space);
+	}
+	void insertIndex(string value, string strParent, BNode*& parent)
+	{
+		if (parent == nullptr)
+		{
+			cout << "Adress is false";
+			return;
+		}
+		if (parent->data == strParent)
+		{
+			insert(value, parent->into);
+			return;
+		}
+		if(parent->into != nullptr)
+			insertIndex(value, strParent, parent->into);
+		if (parent->next != nullptr)
+			insertIndex(value, strParent, parent->next);
+	}
+};
+
+
+void main()
+{
+	Tree url;
+	url.insert("https://url.hcmute.edu.vn/", url.root);
+	url.insert("https://url.hcmute.edu.vn/oop", url.root);
+	url.insert("https://url.hcmute.edu.vn/ctdl", url.root);
+	url.insert("https://url.hcmute.edu.vn/ktmt", url.root);
+	url.insert("https://url.hcmute.edu.vn/oop/week1", url.root);
+	url.insert("https://url.hcmute.edu.vn/oop/week2", url.root);
+	url.insert("https://url.hcmute.edu.vn/ctdl/linkedlist", url.root);
+	url.insert("https://url.hcmute.edu.vn/ctdl/tree", url.root);
+	url.insert("https://url.hcmute.edu.vn/ktmt/mips", url.root);
+	url.insert("https://url.hcmute.edu.vn/ktmt/computerperformance", url.root);
+	url.insertIndex("https://www.youtube.com/", "https://url.hcmute.edu.vn/oop/week1", url.root);
+	url.insertIndex("https://docs.google.com/spreadsheets/danhsachlop", "https://url.hcmute.edu.vn/ctdl", url.root);
+
+	url.printAll(url.root);
+}
